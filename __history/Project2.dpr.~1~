@@ -1,0 +1,148 @@
+﻿program OPI;
+
+{$APPTYPE CONSOLE}
+{$R *.res}
+
+uses
+  System.SysUtils;
+
+function RusCheck(s: string): boolean;
+var
+  i: char;
+  toresult: boolean;
+begin
+  toresult := true;
+  for i in s do
+    if not(((i >= 'а') and (i <= 'я')) or ((i >= 'А') and (i <= 'Я')) or
+      (i = 'ё')) then
+      toresult := false;
+
+  if length(s) = 0 then
+    toresult := false;
+
+  result := toresult;
+end;
+
+function cows(s1, s2: string): integer;
+var
+  i, count: integer;
+begin
+  count := 0;
+  for i := 1 to length(s1) do
+    if ansilowercase(s1[i]) = ansilowercase(s2[i]) then
+      count := count + 1;
+  result := count;
+end;
+
+function lengthcheck(s1, s2: string): boolean;
+begin
+  if length(s2) = length(s1) then
+    result := true
+  else
+    result := false;
+end;
+
+procedure delSpace(var s1: string);
+begin
+  s1 := trim(s1);
+  s1 := ansilowercase(s1);
+
+end;
+
+function Bulls(s1, s2: string): integer;
+type
+  Tmas = array [1 .. 33] of integer;
+var
+  mas1, mas2: Tmas;
+var
+  i: integer;
+begin
+  for i := 1 to 33 do
+  begin
+    mas1[i] := 0;
+    mas2[i] := 0;
+  end;
+
+  for i := 1 to length(s1) do
+  begin
+    if s1[i] = 'ё' then
+      inc(mas1[33])
+    else
+      inc(mas1[ord(s1[i]) - 1072 + 1]);
+    if s2[i] = 'ё' then
+      inc(mas2[33])
+    else
+      inc(mas2[ord(s2[i]) - 1072 + 1]);
+  end;
+  result := 0;
+  for i := 1 to 33 do
+  begin
+    if mas1[i] < mas2[i] then
+      result := result + mas1[i]
+    else
+      result := result + mas2[i];
+  end;
+end;
+function Game():integer;
+var
+  s1, s2: string;
+  dlina, i, count, Bull, Cow: integer;
+  fl: boolean;
+begin
+count:=0;
+    writeln('Ввод слова');
+  fl := false;
+
+  repeat
+    readln(s1);
+    delSpace(s1);
+    fl := true;
+    fl := fl and RusCheck(s1);
+    if fl = false then
+      writeln('Слово некорректно');
+  until fl = true;
+
+  dlina := length(s1);
+  for i := 1 to 70 do
+    writeln;
+    writeln('Длина нашего слова  -   ',dlina);
+  writeln('┌───────┬───────────────────┬──────────┬──────────┐');
+  writeln('│   №   │  Варианты игрока  │   быки   │  коровы  │');
+  write('├───────┼───────────────────┼──────────┼──────────┤   ');
+  repeat
+    repeat
+     write('Ввод слова 2 игроком ');
+      readln(s2);
+      delSpace(s2);
+      fl := true;
+      fl := fl and RusCheck(s2) and lengthcheck(s1, s2);
+      if fl = false then
+      begin
+        inc(count);
+        writeln('│', count:7, '│', s2:19, '│', 0:10, '│', 0:10,
+          '│   Слово некорректно');
+        write('├───────┼───────────────────┼──────────┼──────────┤   ');
+      end;
+    until fl = true;
+    inc(count);
+    Cow := cows(s1, s2);
+    Bull := Bulls(s1, s2);
+    writeln('│', count: 7, '│', s2: 19, '│', Bull: 10, '│', Cow: 10, '│');
+    if s1 <> s2 then
+      write('├───────┼───────────────────┼──────────┼──────────┤  ');
+  until s1 = s2;
+  writeln('└───────┴───────────────────┴──────────┴──────────┘');
+  writeln('Ура, Вы отгадали! Число ходов = ', count);
+  result:=count;
+end;
+
+var x1,x2:integer;
+
+begin
+  x1:=Game;
+  x2:=Game;
+   if x2<x1 then writeln('Выиграл первый игрок')
+   else if x2=x1 then writeln('Ничья') else writeln('Выиграл второй игрок') ;
+
+  readln;
+  end.
