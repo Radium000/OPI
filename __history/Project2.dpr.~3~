@@ -115,7 +115,8 @@ count:=0;
       fl := fl and RusCheck(s2) and lengthcheck(s1, s2);
       if fl = false then
       begin
-        writeln('│', '-':7, '│', s2:19, '│', '-':10, '│', '-':10,
+        inc(count);
+        writeln('│', count:7, '│', s2:19, '│', 0:10, '│', 0:10,
           '│   Слово некорректно');
         write('├───────┼───────────────────┼──────────┼──────────┤   ');
       end;
